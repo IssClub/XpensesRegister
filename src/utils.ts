@@ -58,7 +58,7 @@ export function buildWhatsAppSummary(expenses: Expense[], categories: Category[]
   for (const { category, total: catTotal } of byCat) {
     msg += `${category.emoji} ${category.name}: ${formatCurrency(catTotal, currency)}\n`;
   }
-  msg += `\n_נשלח מ-Kispex 💙_`;
+  msg += `\n_נשלח מ-XpensesRegister 💙_`;
   return msg;
 }
 

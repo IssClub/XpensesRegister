@@ -52,7 +52,7 @@ export default function Dashboard({ data, periodExpenses, period, onAddExpense }
       {/* Header */}
       <div className="px-5 pt-10 pb-4">
         <div className="flex items-center justify-between mb-1">
-          <h1 className="text-2xl font-black tracking-tight text-white">Kispex</h1>
+          <h1 className="text-2xl font-black tracking-tight text-white">XpensesRegister</h1>
           <button
             onClick={handleShare}
             className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded-xl text-sm font-medium border border-gray-700 transition"

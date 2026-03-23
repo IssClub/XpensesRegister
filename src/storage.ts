@@ -1,6 +1,6 @@
 import { AppData, DEFAULT_DATA, SCHEMA_VERSION, DEFAULT_CATEGORIES } from './types';
 
-const STORAGE_KEY = 'kispex_data_v1';
+const STORAGE_KEY = 'xpensesregister_data_v1';
 
 export function loadData(): AppData {
   try {
@@ -44,7 +44,7 @@ export function exportDataAsJSON(data: AppData): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `kispex_backup_${new Date().toISOString().split('T')[0]}.json`;
+  a.download = `xpensesregister_backup_${new Date().toISOString().split('T')[0]}.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
