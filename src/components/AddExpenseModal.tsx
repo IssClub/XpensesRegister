@@ -17,6 +17,7 @@ export default function AddExpenseModal({ categories, expense, currency = '₪',
   const [categoryId, setCategoryId] = useState(expense?.categoryId || categories[0]?.id || '');
   const [note, setNote] = useState(expense?.note || '');
   const [date, setDate] = useState(expense?.date || today);
+  const [isRecurring, setIsRecurring] = useState(expense?.isRecurring ?? false);
   const [scanning, setScanning] = useState(false);
   const [scanError, setScanError] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -31,6 +32,7 @@ export default function AddExpenseModal({ categories, expense, currency = '₪',
       note,
       date,
       createdAt: expense?.createdAt || Date.now(),
+      isRecurring,
     };
     onSave(exp);
   };
@@ -140,7 +142,7 @@ export default function AddExpenseModal({ categories, expense, currency = '₪',
         </div>
 
         {/* Date */}
-        <div className="mb-6">
+        <div className="mb-4">
           <label className="block text-sm text-gray-400 mb-1">תאריך</label>
           <input
             type="date"
@@ -149,6 +151,29 @@ export default function AddExpenseModal({ categories, expense, currency = '₪',
             className="w-full bg-gray-800 text-white rounded-xl px-4 py-3 border border-gray-700 focus:border-amber-500 focus:outline-none"
             style={{ colorScheme: 'dark' }}
           />
+        </div>
+
+        {/* Recurring toggle */}
+        <div className="mb-6">
+          <button
+            type="button"
+            onClick={() => setIsRecurring(r => !r)}
+            className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl border transition-all ${
+              isRecurring
+                ? 'border-amber-500 bg-amber-500/10 text-amber-300'
+                : 'border-gray-700 bg-gray-800 text-gray-400 hover:border-gray-600'
+            }`}
+          >
+            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+              isRecurring ? 'border-amber-500 bg-amber-500' : 'border-gray-600'
+            }`}>
+              {isRecurring && <div className="w-2 h-2 bg-white rounded-full" />}
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-medium">הוצאה קבועה</p>
+              <p className="text-xs opacity-60">תוצע אוטומטית בתחילת כל תקופה</p>
+            </div>
+          </button>
         </div>
 
         {scanError && <p className="text-red-400 text-sm mb-3 text-center">{scanError}</p>}

@@ -8,9 +8,11 @@ interface Props {
   periodExpenses: Expense[];
   period: ReturnType<typeof getCurrentPeriod>;
   onAddExpense: () => void;
+  recurringExpenses?: Expense[];
+  onAddRecurring?: () => void;
 }
 
-export default function Dashboard({ data, periodExpenses, period, onAddExpense }: Props) {
+export default function Dashboard({ data, periodExpenses, period, onAddExpense, recurringExpenses = [], onAddRecurring }: Props) {
   const total = getTotalForExpenses(periodExpenses);
   const budget = data.settings.monthlyBudget;
   const percent = getBudgetPercent(total, budget);
@@ -63,6 +65,24 @@ export default function Dashboard({ data, periodExpenses, period, onAddExpense }
         </div>
         <p className="text-gray-500 text-sm">{period.label}</p>
       </div>
+
+      {/* Recurring expenses banner */}
+      {recurringExpenses.length > 0 && (
+        <div className="mx-4 mb-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl px-4 py-3 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-amber-300 text-sm font-semibold">🔁 הוצאות קבועות</p>
+            <p className="text-amber-400/70 text-xs mt-0.5">
+              {recurringExpenses.length} הוצאות קבועות מהתקופה הקודמת ממתינות
+            </p>
+          </div>
+          <button
+            onClick={onAddRecurring}
+            className="flex-shrink-0 bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm px-4 py-2 rounded-xl transition"
+          >
+            הוסף
+          </button>
+        </div>
+      )}
 
       {/* Main card */}
       <div className="mx-4 mb-4">

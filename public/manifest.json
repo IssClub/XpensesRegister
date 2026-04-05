@@ -1,0 +1,12 @@
+{
+  "name": "XpensesRegister",
+  "short_name": "XpensesReg",
+  "description": "מעקב הוצאות חודשי",
+  "start_url": "/XpensesRegister/",
+  "scope": "/XpensesRegister/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#030712",
+  "theme_color": "#030712",
+  "lang": "he"
+}

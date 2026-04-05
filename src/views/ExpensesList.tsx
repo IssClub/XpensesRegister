@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Search, Plus, Trash2, Pencil } from 'lucide-react';
-import { AppData, Expense, getCurrentPeriod, getExpensesInPeriod } from '../types';
+import { Search, Plus, Trash2, Pencil, ChevronRight, ChevronLeft } from 'lucide-react';
+import { AppData, Expense, getPeriodByOffset, getExpensesInPeriod } from '../types';
 import { formatCurrency, formatDate } from '../utils';
 
 interface Props {
@@ -14,6 +14,7 @@ export default function ExpensesList({ data, onEdit, onDelete, onAdd }: Props) {
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState('all');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [periodOffset, setPeriodOffset] = useState(0);
 
   useEffect(() => {
     if (!deleteConfirm) return;
@@ -23,7 +24,7 @@ export default function ExpensesList({ data, onEdit, onDelete, onAdd }: Props) {
 
   const currency = data.settings.currency || '₪';
 
-  const period = getCurrentPeriod();
+  const period = getPeriodByOffset(periodOffset);
   const periodExpenses = getExpensesInPeriod(data.expenses, period.start, period.end);
 
   const filtered = useMemo(() => {
@@ -57,7 +58,23 @@ export default function ExpensesList({ data, onEdit, onDelete, onAdd }: Props) {
           </button>
         </div>
 
-        <p className="text-sm text-gray-500 mb-3">{period.label}</p>
+        {/* Period navigation */}
+        <div className="flex items-center justify-between mb-3">
+          <button
+            onClick={() => setPeriodOffset(o => o - 1)}
+            className="p-1.5 text-gray-500 hover:text-gray-300 transition"
+          >
+            <ChevronRight size={18} />
+          </button>
+          <p className="text-sm text-gray-400 font-medium">{period.label}</p>
+          <button
+            onClick={() => setPeriodOffset(o => o + 1)}
+            disabled={periodOffset >= 0}
+            className="p-1.5 text-gray-500 hover:text-gray-300 disabled:opacity-20 transition"
+          >
+            <ChevronLeft size={18} />
+          </button>
+        </div>
 
         <div className="relative mb-3">
           <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" />

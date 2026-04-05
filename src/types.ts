@@ -7,6 +7,7 @@ export interface Expense {
   note: string;
   date: string; // ISO date string YYYY-MM-DD
   createdAt: number; // timestamp
+  isRecurring?: boolean;
 }
 
 export interface Category {
@@ -76,6 +77,15 @@ export function getCurrentPeriod(date = new Date()): { start: Date; end: Date; l
   const label = `${periodStart.getDate()} ${months[periodStart.getMonth()]} – ${periodEnd.getDate()} ${months[periodEnd.getMonth()]}`;
 
   return { start: periodStart, end: periodEnd, label };
+}
+
+export function getPeriodByOffset(offset: number): ReturnType<typeof getCurrentPeriod> {
+  if (offset === 0) return getCurrentPeriod();
+  const current = getCurrentPeriod();
+  const shifted = new Date(current.start);
+  shifted.setMonth(shifted.getMonth() + offset);
+  shifted.setDate(15); // safely inside the target period
+  return getCurrentPeriod(shifted);
 }
 
 export function getExpensesInPeriod(expenses: Expense[], start: Date, end: Date): Expense[] {

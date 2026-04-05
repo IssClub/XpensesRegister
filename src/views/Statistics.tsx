@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
-import { AppData, getCurrentPeriod, getExpensesInPeriod } from '../types';
+import { useMemo, useState } from 'react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { AppData, getPeriodByOffset, getExpensesInPeriod } from '../types';
 import { formatCurrency, getExpensesByCategory, getMonthlyComparison, getTotalForExpenses } from '../utils';
 
 interface Props {
@@ -45,8 +46,9 @@ function DonutSlice({ pct, color, offset }: { pct: number; color: string; offset
 }
 
 export default function Statistics({ data }: Props) {
+  const [periodOffset, setPeriodOffset] = useState(0);
   const currency = data.settings.currency || '₪';
-  const period = getCurrentPeriod();
+  const period = getPeriodByOffset(periodOffset);
   const periodExpenses = getExpensesInPeriod(data.expenses, period.start, period.end);
   const total = getTotalForExpenses(periodExpenses);
 
@@ -71,7 +73,19 @@ export default function Statistics({ data }: Props) {
     <div className="min-h-screen bg-gray-950 px-4">
       <div className="pt-10 pb-4">
         <h1 className="text-xl font-black text-white">סטטיסטיקות</h1>
-        <p className="text-gray-500 text-sm">{period.label}</p>
+        <div className="flex items-center gap-3 mt-1">
+          <button onClick={() => setPeriodOffset(o => o - 1)} className="p-1 text-gray-500 hover:text-gray-300 transition">
+            <ChevronRight size={18} />
+          </button>
+          <p className="text-gray-400 text-sm font-medium">{period.label}</p>
+          <button
+            onClick={() => setPeriodOffset(o => o + 1)}
+            disabled={periodOffset >= 0}
+            className="p-1 text-gray-500 hover:text-gray-300 disabled:opacity-20 transition"
+          >
+            <ChevronLeft size={18} />
+          </button>
+        </div>
       </div>
 
       {data.expenses.length === 0 ? (

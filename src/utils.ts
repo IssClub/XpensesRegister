@@ -1,4 +1,4 @@
-import { Expense, Category, AppSettings } from './types';
+import { Expense, Category, AppSettings, getCurrentPeriod } from './types';
 
 export function formatCurrency(amount: number, currency = '₪'): string {
   return `${currency}${amount.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
@@ -63,18 +63,19 @@ export function buildWhatsAppSummary(expenses: Expense[], categories: Category[]
 }
 
 export function getMonthlyComparison(expenses: Expense[]): Array<{ label: string; total: number }> {
-  const map = new Map<string, number>();
+  // Use billing periods (10th–9th) instead of calendar months
+  const periodMap = new Map<string, { total: number; label: string }>();
   for (const e of expenses) {
     const d = new Date(e.date + 'T00:00:00');
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    map.set(key, (map.get(key) || 0) + e.amount);
+    const period = getCurrentPeriod(d);
+    const key = period.start.toISOString().split('T')[0];
+    const existing = periodMap.get(key);
+    periodMap.set(key, { total: (existing?.total ?? 0) + e.amount, label: period.label });
   }
-  const sorted = Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0])).slice(-6);
-  const heMonths = ['ינו', 'פבר', 'מרץ', 'אפר', 'מאי', 'יוני', 'יולי', 'אוג', 'ספט', 'אוק', 'נוב', 'דצמ'];
-  return sorted.map(([key, total]) => {
-    const [, m] = key.split('-');
-    return { label: heMonths[parseInt(m) - 1], total };
-  });
+  return Array.from(periodMap.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .slice(-6)
+    .map(([, { total, label }]) => ({ label, total }));
 }
 
 export function playBudgetExceededSound(): void {
