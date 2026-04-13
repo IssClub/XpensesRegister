@@ -1,5 +1,9 @@
 import { Expense, Category, AppSettings, getCurrentPeriod } from './types';
 
+export function toLocalDateStr(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
 export function formatCurrency(amount: number, currency = '₪'): string {
   return `${currency}${amount.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 }
@@ -68,7 +72,7 @@ export function getMonthlyComparison(expenses: Expense[]): Array<{ label: string
   for (const e of expenses) {
     const d = new Date(e.date + 'T00:00:00');
     const period = getCurrentPeriod(d);
-    const key = period.start.toISOString().split('T')[0];
+    const key = toLocalDateStr(period.start);
     const existing = periodMap.get(key);
     periodMap.set(key, { total: (existing?.total ?? 0) + e.amount, label: period.label });
   }

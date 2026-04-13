@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { X, Camera, Loader2 } from 'lucide-react';
-import { Expense, Category, getCurrentPeriod } from '../types';
+import { Expense, Category, getCurrentPeriod, localDateStr } from '../types';
 import { generateId } from '../utils';
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function AddExpenseModal({ categories, expense, currency = '₪', onSave, onClose }: Props) {
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr(new Date());
   const [amount, setAmount] = useState(expense ? String(expense.amount) : '');
   const [categoryId, setCategoryId] = useState(expense?.categoryId || categories[0]?.id || '');
   const [note, setNote] = useState(expense?.note || '');
@@ -153,8 +153,8 @@ export default function AddExpenseModal({ categories, expense, currency = '₪',
           />
           {(() => {
             const p = getCurrentPeriod();
-            const start = p.start.toISOString().split('T')[0];
-            const end = p.end.toISOString().split('T')[0];
+            const start = localDateStr(p.start);
+            const end = localDateStr(p.end);
             if (date && (date < start || date > end)) {
               return (
                 <p className="text-amber-400 text-xs mt-1.5 flex items-center gap-1">
@@ -203,8 +203,8 @@ export default function AddExpenseModal({ categories, expense, currency = '₪',
           <button
             onClick={() => fileRef.current?.click()}
             disabled={scanning}
-            title="סרוק קבלה"
-            className="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 rounded-xl border border-gray-700 transition flex items-center gap-2"
+            title="סרוק קבלה (דורש חיבור לשרת)"
+            className="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 rounded-xl border border-gray-700 transition flex items-center gap-2 opacity-40 cursor-not-allowed"
           >
             {scanning ? <Loader2 size={18} className="animate-spin" /> : <Camera size={18} />}
             {!scanning && <span className="text-sm">סרוק</span>}

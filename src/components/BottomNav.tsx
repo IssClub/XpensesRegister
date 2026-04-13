@@ -36,6 +36,7 @@ export default function BottomNav({ activeTab, onTabChange, onAdd }: Props) {
         {/* FAB */}
         <button
           onClick={onAdd}
+          aria-label="הוסף הוצאה"
           className="flex items-center justify-center w-14 h-14 bg-amber-500 hover:bg-amber-400 active:scale-95 rounded-2xl shadow-lg shadow-amber-500/30 transition-all -mt-6"
         >
           <Plus size={28} strokeWidth={2.5} className="text-black" />

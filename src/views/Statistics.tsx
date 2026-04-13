@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { ChevronRight, ChevronLeft, TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { AppData, getPeriodByOffset, getExpensesInPeriod, Expense } from '../types';
+import { AppData, getPeriodByOffset, getExpensesInPeriod, Expense, localDateStr } from '../types';
 import { formatCurrency, getExpensesByCategory, getMonthlyComparison, getTotalForExpenses } from '../utils';
 
 interface Props {
@@ -47,7 +47,7 @@ function DailyLineChart({ expenses, period }: { expenses: Expense[]; period: { s
     let cumulative = 0;
     const d = new Date(period.start);
     while (d <= endDate) {
-      const dateStr = d.toISOString().split('T')[0];
+      const dateStr = localDateStr(d);
       cumulative += expenses.filter(e => e.date === dateStr).reduce((s, e) => s + e.amount, 0);
       result.push({ dateStr, cumulative });
       d.setDate(d.getDate() + 1);

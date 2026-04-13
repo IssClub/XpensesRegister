@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm run:*)",
       "Bash(gh run:*)",
-      "WebSearch"
+      "WebSearch",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }

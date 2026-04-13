@@ -89,8 +89,12 @@ export function getPeriodByOffset(offset: number): ReturnType<typeof getCurrentP
   return getCurrentPeriod(shifted);
 }
 
+export function localDateStr(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
 export function getExpensesInPeriod(expenses: Expense[], start: Date, end: Date): Expense[] {
-  const startStr = start.toISOString().split('T')[0];
-  const endStr = end.toISOString().split('T')[0];
+  const startStr = localDateStr(start);
+  const endStr = localDateStr(end);
   return expenses.filter(e => e.date >= startStr && e.date <= endStr);
 }
