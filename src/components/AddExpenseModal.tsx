@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { X, Camera, Loader2 } from 'lucide-react';
-import { Expense, Category } from '../types';
+import { Expense, Category, getCurrentPeriod } from '../types';
 import { generateId } from '../utils';
 
 interface Props {
@@ -151,6 +151,19 @@ export default function AddExpenseModal({ categories, expense, currency = '₪',
             className="w-full bg-gray-800 text-white rounded-xl px-4 py-3 border border-gray-700 focus:border-amber-500 focus:outline-none"
             style={{ colorScheme: 'dark' }}
           />
+          {(() => {
+            const p = getCurrentPeriod();
+            const start = p.start.toISOString().split('T')[0];
+            const end = p.end.toISOString().split('T')[0];
+            if (date && (date < start || date > end)) {
+              return (
+                <p className="text-amber-400 text-xs mt-1.5 flex items-center gap-1">
+                  ⚠️ תאריך זה מחוץ לתקופה הנוכחית – ההוצאה תופיע בתקופה אחרת
+                </p>
+              );
+            }
+            return null;
+          })()}
         </div>
 
         {/* Recurring toggle */}

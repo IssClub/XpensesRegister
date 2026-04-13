@@ -24,6 +24,7 @@ function migrateData(old: Partial<AppData>): AppData {
     settings: {
       monthlyBudget: old.settings?.monthlyBudget ?? null,
       currency: old.settings?.currency ?? '₪',
+      categoryBudgets: old.settings?.categoryBudgets ?? {},
     },
   };
   saveData(migrated);
@@ -51,6 +52,32 @@ export function exportDataAsJSON(data: AppData): void {
   URL.revokeObjectURL(url);
 }
 
+export function exportDataAsCSV(data: AppData): void {
+  const headers = ['תאריך', 'קטגוריה', 'סכום', 'הערה', 'קבועה'];
+  const rows = [...data.expenses]
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .map(e => {
+      const cat = data.categories.find(c => c.id === e.categoryId);
+      return [
+        e.date,
+        cat?.name || 'אחר',
+        e.amount,
+        `"${(e.note || '').replace(/"/g, '""')}"`,
+        e.isRecurring ? 'כן' : 'לא',
+      ].join(',');
+    });
+  const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `xpensesregister_${new Date().toISOString().split('T')[0]}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 export function importDataFromJSON(file: File): Promise<AppData> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -68,6 +95,7 @@ export function importDataFromJSON(file: File): Promise<AppData> {
           settings: {
             monthlyBudget: parsed.settings?.monthlyBudget ?? null,
             currency: parsed.settings?.currency ?? '₪',
+            categoryBudgets: parsed.settings?.categoryBudgets ?? {},
           },
         };
         resolve(data);

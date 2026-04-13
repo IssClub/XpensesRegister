@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export interface Expense {
   id: string;
@@ -20,6 +20,7 @@ export interface Category {
 export interface AppSettings {
   monthlyBudget: number | null;
   currency: string;
+  categoryBudgets?: Record<string, number>;
 }
 
 export interface AppData {

@@ -124,22 +124,38 @@ export default function Dashboard({ data, periodExpenses, period, onAddExpense, 
       </div>
 
       {/* KPI row */}
-      <div className="px-4 mb-4 grid grid-cols-2 gap-3">
-        <div className="bg-gray-900 rounded-2xl p-4 border border-gray-800">
-          <p className="text-gray-500 text-xs mb-1">מ"מ יומי</p>
-          <p className="text-xl font-bold text-white" style={{ fontFamily: "'DM Mono', monospace" }}>
-            {periodExpenses.length > 0
-              ? formatCurrency(Math.round(total / Math.max(1, Math.ceil((Date.now() - period.start.getTime()) / 86400000))), currency)
-              : `${currency}0`}
-          </p>
-        </div>
-        <div className="bg-gray-900 rounded-2xl p-4 border border-gray-800">
-          <p className="text-gray-500 text-xs mb-1">מס׳ פעולות</p>
-          <p className="text-xl font-bold text-white" style={{ fontFamily: "'DM Mono', monospace" }}>
-            {periodExpenses.length}
-          </p>
-        </div>
-      </div>
+      {(() => {
+        const daysSoFar = Math.max(1, Math.ceil((Date.now() - period.start.getTime()) / 86400000));
+        const daysTotal = Math.ceil((period.end.getTime() - period.start.getTime()) / 86400000);
+        const daysLeft = Math.max(0, daysTotal - daysSoFar);
+        const avgDaily = periodExpenses.length > 0 ? total / daysSoFar : 0;
+        const projected = Math.round(avgDaily * daysTotal);
+        return (
+          <div className="px-4 mb-4 grid grid-cols-3 gap-2">
+            <div className="bg-gray-900 rounded-2xl p-3 border border-gray-800">
+              <p className="text-gray-500 text-xs mb-1">מ"מ יומי</p>
+              <p className="text-base font-bold text-white" style={{ fontFamily: "'DM Mono', monospace" }}>
+                {periodExpenses.length > 0 ? formatCurrency(Math.round(avgDaily), currency) : `${currency}0`}
+              </p>
+            </div>
+            <div className="bg-gray-900 rounded-2xl p-3 border border-gray-800">
+              <p className="text-gray-500 text-xs mb-1">ימים נותרו</p>
+              <p className="text-base font-bold text-white" style={{ fontFamily: "'DM Mono', monospace" }}>
+                {daysLeft}
+              </p>
+            </div>
+            <div className={`rounded-2xl p-3 border ${
+              projected > (budget || Infinity) ? 'bg-red-950/30 border-red-900/40' : 'bg-gray-900 border-gray-800'
+            }`}>
+              <p className="text-gray-500 text-xs mb-1">תחזית</p>
+              <p className={`text-base font-bold ${projected > (budget || Infinity) ? 'text-red-400' : 'text-white'}`}
+                style={{ fontFamily: "'DM Mono', monospace" }}>
+                {periodExpenses.length > 0 ? formatCurrency(projected, currency) : '–'}
+              </p>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Recent expenses */}
       <div className="px-4">

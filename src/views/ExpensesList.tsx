@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Search, Plus, Trash2, Pencil, ChevronRight, ChevronLeft } from 'lucide-react';
 import { AppData, Expense, getPeriodByOffset, getExpensesInPeriod } from '../types';
-import { formatCurrency, formatDate } from '../utils';
+import { formatCurrency, formatDate, getTotalForExpenses } from '../utils';
 
 interface Props {
   data: AppData;
@@ -156,6 +156,14 @@ export default function ExpensesList({ data, onEdit, onDelete, onAdd }: Props) {
               </div>
             );
           })
+        )}
+        {filtered.length > 0 && (
+          <div className="mt-3 bg-gray-900 rounded-2xl px-4 py-3 border border-gray-700 flex items-center justify-between">
+            <span className="text-gray-400 text-sm">{filtered.length} הוצאות</span>
+            <span className="font-bold text-white" style={{ fontFamily: "'DM Mono', monospace" }}>
+              {formatCurrency(getTotalForExpenses(filtered), currency)}
+            </span>
+          </div>
         )}
       </div>
       <div className="h-4" />
